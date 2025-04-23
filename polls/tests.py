@@ -102,3 +102,19 @@ class QuestionIndexViewTest(TestCase):
             response.context["latest_question_list"],
             [question2, question1],
         )
+
+    def test_last_five_published_questions(self):
+        """
+        The questions index page may display the last five published questions
+        """
+        create_question(question_text="Past question 1.", days=-30)
+        question2 = create_question(question_text="Past question 2.", days=-25)
+        question3 = create_question(question_text="Past question 3.", days=-20)
+        question4 = create_question(question_text="Past question 4.", days=-15)
+        question5 = create_question(question_text="Past question 5.", days=-10)
+        question6 = create_question(question_text="Past question 6.", days=-5)
+        response = self.client.get(reverse("polls:index"))
+        self.assertQuerySetEqual(
+            response.context["latest_question_list"],
+            [question6, question5, question4, question3, question2],
+        )
